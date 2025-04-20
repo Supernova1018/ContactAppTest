@@ -119,8 +119,8 @@ public class ContactServlet extends HttpServlet {
             return;
         }
 
-        dao.addContact(contact);
-        resp.getWriter().write("{\"message\":\"Contacto creado exitosamente\"}");
+        dao.updateContact(contact);
+        resp.getWriter().write("{\"message\":\"Contacto actualizado exitosamente\"}");
         }
 
     @Override

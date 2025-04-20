@@ -104,14 +104,15 @@ public class ContactDAO {
             pstmt.setString(2, contact.getEmail());
             pstmt.setString(3, contact.getPhone());
             pstmt.setString(4, contact.getCedula());
-            pstmt.setInt(4, contact.getId());
-            pstmt.executeUpdate();
-            return true;
+            pstmt.setInt(5, contact.getId()); // ← CORRECTO: este es el índice 5
+            int rowsUpdated = pstmt.executeUpdate();
+            return rowsUpdated > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
+
 
     public boolean deleteContact(int id) {
         String sql = "DELETE FROM contacts WHERE id=?";
