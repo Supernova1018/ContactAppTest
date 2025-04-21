@@ -87,12 +87,23 @@ public class ContactServlet extends HttpServlet {
         dao.addContact(contact);
         resp.getWriter().write("{\"message\":\"Contacto creado exitosamente\"}");
     }
-        
+
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         BufferedReader reader = req.getReader();
         Contact contact = gson.fromJson(reader, Contact.class);
+
+        // Verificar si el contacto con ese ID existe
+
+        Contact existingContact = dao.getContactById(contact.getId());
+        if (existingContact == null) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            resp.getWriter().write("{\"error\":\"No se encontró el contacto con ID: " + contact.getId() + "\"}");
+            return;
+        }
+
+        // VALIDACIONES
 
         if (contact.getName() == null || !contact.getName().matches("[A-Za-zÁÉÍÓÚáéíóúÑñ ]+")) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -120,12 +131,36 @@ public class ContactServlet extends HttpServlet {
 
         dao.updateContact(contact);
         resp.getWriter().write("{\"message\":\"Contacto actualizado exitosamente\"}");
-        }
+    }
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        int id = Integer.parseInt(req.getParameter("id"));
-        dao.deleteContact(id);
-        resp.getWriter().write("{\"message\":\"Contacto eliminado\"}");
+        String idParam = req.getParameter("id");
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+
+        if (idParam == null) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().write("{\"error\":\"Debe proporcionar un ID para eliminar\"}");
+            return;
+        }
+
+        int id = Integer.parseInt(idParam);
+
+        // Verificar si el contacto existe
+        Contact contact = dao.getContactById(id);
+        if (contact == null) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            resp.getWriter().write("{\"error\":\"No se encontró el contacto con ID: " + id + "\"}");
+            return;
+        }
+
+        boolean deleted = dao.deleteContact(id);
+        if (deleted) {
+            resp.getWriter().write("{\"message\":\"Contacto eliminado exitosamente\"}");
+        } else {
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().write("{\"error\":\"Error al eliminar el contacto\"}");
+        }
     }
 }
