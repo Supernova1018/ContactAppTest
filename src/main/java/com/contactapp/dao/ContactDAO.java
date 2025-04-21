@@ -21,18 +21,7 @@ public class ContactDAO {
 
         System.out.println("Ruta DB absoluta: " + new File("database/contacts.db").getAbsolutePath());
 
-        // Intentar crear la tabla si no existe
-        try (Connection conn = DriverManager.getConnection(url);
-             Statement stmt = conn.createStatement()) {
-            String sql = "CREATE TABLE IF NOT EXISTS contacts (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "name TEXT NOT NULL, " +
-                    "email TEXT, " +
-                    "phone TEXT)";
-            stmt.execute(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
     }
 
     public List<Contact> getAllContacts() {

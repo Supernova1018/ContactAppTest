@@ -50,17 +50,16 @@ public class ContactServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        System.out.println("📥 Petición POST recibida");
+        System.out.println("Petición POST recibida");
 
-        req.setCharacterEncoding("UTF-8"); // 🔥 Esto es clave
+        req.setCharacterEncoding("UTF-8");
 
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
         BufferedReader reader = req.getReader();
         Contact contact = gson.fromJson(reader, Contact.class);
-        
-// VALIDACIONES
+
         if (contact.getName() == null || !contact.getName().matches("[A-Za-zÁÉÍÓÚáéíóúÑñ ]+")) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resp.getWriter().write("{\"error\":\"Nombre inválido. Solo letras y espacios.\"}");
@@ -94,7 +93,7 @@ public class ContactServlet extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         BufferedReader reader = req.getReader();
         Contact contact = gson.fromJson(reader, Contact.class);
-        // VALIDACIONES
+
         if (contact.getName() == null || !contact.getName().matches("[A-Za-zÁÉÍÓÚáéíóúÑñ ]+")) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resp.getWriter().write("{\"error\":\"Nombre inválido. Solo letras y espacios.\"}");
